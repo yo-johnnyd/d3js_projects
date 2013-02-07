@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			.none{
+				fill:#1b859f;
+			}
+			.noneDark{
+				fill:#135e70;
+			}
+			.low {
+				fill:#5fc640;
+			}
+			.lowDark{
+				fill:#438b2b;
+			}
+			.fair{
+				fill:#ffa24d;
+			}
+			.fairDark{
+				fill:#b57236;
+			}
+			.high{
+				fill:#dc3234;
+			}
+			.highDark{
+				fill:#992223;
+			}
+			.dayAbbrText{
+				fill:white;
+				font-size:25px;
+				font-family:sans-serif;
+			}
+			.dateText{
+				fill:white;
+				font-size:15px;
+				font-family:sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/json" id="bootstrap-data">
+			{
+				"jsonData":[
+					{ "peakDateTime": "06-23-2013 16:00:00", "temperature": 86, "peakLikelihood": "none"}, 
+					{ "peakDateTime": "06-24-2013 17:00:00", "temperature": 82, "peakLikelihood": "low"},
+					{ "peakDateTime": "06-25-2013 18:00:00", "temperature": 78, "peakLikelihood": "low"},
+					{ "peakDateTime": "06-26-2013 18:00:00", "temperature": 84, "peakLikelihood": "low"},
+					{ "peakDateTime": "06-27-2013 17:00:00", "temperature": 91, "peakLikelihood": "high"},
+					{ "peakDateTime": "06-28-2013 17:00:00", "temperature": 98, "peakLikelihood": "fair"},
+					{ "peakDateTime": "06-29-2013 18:00:00", "temperature": 96, "peakLikelihood": "none"}
+				]
+			}
+		</script>
+		<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="d3.v3.min.js"></script>
+		<script>
+			// COULD DO IT THIS WAY IN PROD
+			// locally, the browser complains when you try and make an http request to a local file
+			// var data; // a global
+
+			// d3.json("path/to/file.json", function(error, json) {
+			//   if (error) return console.warn(error);
+			//   data = json;
+			//   visualizeit();
+			// });
+
+			var data = JSON.parse($('#bootstrap-data').text().trim());
+
+			var parseDate = d3.time.format("%m-%d-%Y %H:%M:%S").parse,
+				formatDayAbbr = function(d){ return parseDate(d.peakDateTime).toDateString().substring(0,3);},
+				formatDate = function(d) { return parseDate(d.peakDateTime).toDateString().substring(4,10); };
+
+			var svgContainer = d3.select("body").append("svg")
+							.attr("width",700)
+							.attr("height",300);
+
+			var dayRectangleGroup = svgContainer.append("g");
+
+			var dayRectangles = dayRectangleGroup.selectAll("rect")
+									.data(data.jsonData)
+									.enter()
+									.append("rect");
+
+			var dayRectangleAttributes = dayRectangles
+											.attr("x", function(d, i){ return i*85; })
+											.attr("y", 0)
+											.attr("height", 60)
+											.attr("width",80)
+											.attr("class", function(d){ return d.peakLikelihood; });
+
+			var dayAbbrText = dayRectangleGroup.selectAll("text")
+								.data(data.jsonData)
+								.enter()
+								.append("text");
+
+			var dayAbbrTextAttributes = dayAbbrText
+											.attr("x", function(d, i){ return i*85+15; })
+											.attr("y", 40)
+											.text(function(d){ return formatDayAbbr(d); })
+                 							.attr("class", "dayAbbrText");
+
+			var dateRectangleGroup = svgContainer.append("g")
+										.attr("transform", "translate(0,60)");;
+
+			var dateRectangles = dateRectangleGroup.selectAll("rect")
+									.data(data.jsonData)
+									.enter()
+									.append("rect");
+
+			var dateRectangleAttributes = dateRectangles
+											.attr("x", function(d, i){ return i*85; })
+											.attr("y", 0)
+											.attr("height", 30)
+											.attr("width",80)
+											.attr("class", function(d){ return d.peakLikelihood + "Dark"; });
+
+			var dateText = dateRectangleGroup.selectAll("text")
+							.data(data.jsonData)
+							.enter()
+							.append("text");
+
+			var dateTextAttributes = dateText
+								.attr("x", function(d, i){ return i*85+15; })
+								.attr("y", 20)
+								.text(function(d){ return formatDate(d); })
+     							.attr("class", "dateText");
+
+
+		</script>
+	</body>
+</html>

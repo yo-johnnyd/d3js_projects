@@ -1,0 +1,11 @@
+{
+	"data":[
+		{ "peakDateTime": "06-24-2013 16:00:00", "temperature": 86, "peakLikelihood": "none"}, 
+		{ "peakDateTime": "06-25-2013 17:00:00", "temperature": 82, "peakLikelihood": "low"},
+		{ "peakDateTime": "06-26-2013 18:00:00", "temperature": 78, "peakLikelihood": "low"},
+		{ "peakDateTime": "06-27-2013 18:00:00", "temperature": 84, "peakLikelihood": "low"},
+		{ "peakDateTime": "06-28-2013 17:00:00", "temperature": 91, "peakLikelihood": "high"},
+		{ "peakDateTime": "06-29-2013 17:00:00", "temperature": 98, "peakLikelihood": "fair"},
+		{ "peakDateTime": "06-30-2013 18:00:00", "temperature": 96, "peakLikelihood": "none"}
+	]
+}
