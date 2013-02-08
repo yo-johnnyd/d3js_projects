@@ -36,13 +36,46 @@
 				font-size:15px;
 				font-family:sans-serif;
 			}
+			.area{
+				fill:#d6d6d6;
+			}
+			.nonArea{
+				fill:#efefef;
+			}
 		</style>
 	</head>
 	<body>
 		<script type="text/json" id="bootstrap-data">
 			{
 				"jsonData":[
-					{ "peakDateTime": "06-23-2013 16:00:00", "temperature": 86, "peakLikelihood": "none"}, 
+					{ "peakDateTime": "06-23-2013 16:00:00", "highTemperature": 86, 
+						"temperatures":[
+						{"dateTime": "06-23-2013 00:00:00", "temperature":80},
+						{"dateTime": "06-23-2013 01:00:00", "temperature":81},
+						{"dateTime": "06-23-2013 02:00:00", "temperature":81},
+						{"dateTime": "06-23-2013 03:00:00", "temperature":81},
+						{"dateTime": "06-23-2013 04:00:00", "temperature":81},
+						{"dateTime": "06-23-2013 05:00:00", "temperature":82},
+						{"dateTime": "06-23-2013 06:00:00", "temperature":82},
+						{"dateTime": "06-23-2013 07:00:00", "temperature":82},
+						{"dateTime": "06-23-2013 08:00:00", "temperature":82},
+						{"dateTime": "06-23-2013 09:00:00", "temperature":83},
+						{"dateTime": "06-23-2013 10:00:00", "temperature":83},
+						{"dateTime": "06-23-2013 11:00:00", "temperature":84},
+						{"dateTime": "06-23-2013 12:00:00", "temperature":84},
+						{"dateTime": "06-23-2013 13:00:00", "temperature":85},
+						{"dateTime": "06-23-2013 14:00:00", "temperature":86},
+						{"dateTime": "06-23-2013 15:00:00", "temperature":86},
+						{"dateTime": "06-23-2013 16:00:00", "temperature":85},
+						{"dateTime": "06-23-2013 17:00:00", "temperature":84},
+						{"dateTime": "06-23-2013 18:00:00", "temperature":84},
+						{"dateTime": "06-23-2013 19:00:00", "temperature":83},
+						{"dateTime": "06-23-2013 20:00:00", "temperature":80},
+						{"dateTime": "06-23-2013 21:00:00", "temperature":80},
+						{"dateTime": "06-23-2013 22:00:00", "temperature":79},
+						{"dateTime": "06-23-2013 23:00:00", "temperature":78}
+						], 
+						"peakLikelihood": "none"}, 
 					{ "peakDateTime": "06-24-2013 17:00:00", "temperature": 82, "peakLikelihood": "low"},
 					{ "peakDateTime": "06-25-2013 18:00:00", "temperature": 78, "peakLikelihood": "low"},
 					{ "peakDateTime": "06-26-2013 18:00:00", "temperature": 84, "peakLikelihood": "low"},
@@ -69,62 +102,93 @@
 
 			var parseDate = d3.time.format("%m-%d-%Y %H:%M:%S").parse,
 				formatDayAbbr = function(d){ return parseDate(d.peakDateTime).toDateString().substring(0,3);},
-				formatDate = function(d) { return parseDate(d.peakDateTime).toDateString().substring(4,10); };
+				formatDate = function(d) { return parseDate(d.peakDateTime).toDateString().substring(4,10); },
+				formatHour = function(d) { return parseDate(d.dateTime).getHours(); };
 
 			var svgContainer = d3.select("body").append("svg")
-							.attr("width",700)
-							.attr("height",300);
+				.attr("width",700)
+				.attr("height",500);
 
 			var dayRectangleGroup = svgContainer.append("g");
 
 			var dayRectangles = dayRectangleGroup.selectAll("rect")
-									.data(data.jsonData)
-									.enter()
-									.append("rect");
+				.data(data.jsonData)
+				.enter()
+				.append("rect");
 
 			var dayRectangleAttributes = dayRectangles
-											.attr("x", function(d, i){ return i*85; })
-											.attr("y", 0)
-											.attr("height", 60)
-											.attr("width",80)
-											.attr("class", function(d){ return d.peakLikelihood; });
+				.attr("x", function(d, i){ return i*85; })
+				.attr("y", 0)
+				.attr("height", 60)
+				.attr("width",80)
+				.attr("class", function(d){ return d.peakLikelihood; });
 
 			var dayAbbrText = dayRectangleGroup.selectAll("text")
-								.data(data.jsonData)
-								.enter()
-								.append("text");
+				.data(data.jsonData)
+				.enter()
+				.append("text");
 
 			var dayAbbrTextAttributes = dayAbbrText
-											.attr("x", function(d, i){ return i*85+15; })
-											.attr("y", 40)
-											.text(function(d){ return formatDayAbbr(d); })
-                 							.attr("class", "dayAbbrText");
+				.attr("x", function(d, i){ return i*85+15; })
+				.attr("y", 40)
+				.text(function(d){ return formatDayAbbr(d); })
+				.attr("class", "dayAbbrText");
 
 			var dateRectangleGroup = svgContainer.append("g")
-										.attr("transform", "translate(0,60)");;
+				.attr("transform", "translate(0,60)");;
 
 			var dateRectangles = dateRectangleGroup.selectAll("rect")
-									.data(data.jsonData)
-									.enter()
-									.append("rect");
+				.data(data.jsonData)
+				.enter()
+				.append("rect");
 
 			var dateRectangleAttributes = dateRectangles
-											.attr("x", function(d, i){ return i*85; })
-											.attr("y", 0)
-											.attr("height", 30)
-											.attr("width",80)
-											.attr("class", function(d){ return d.peakLikelihood + "Dark"; });
+				.attr("x", function(d, i){ return i*85; })
+				.attr("y", 0)
+				.attr("height", 30)
+				.attr("width",80)
+				.attr("class", function(d){ return d.peakLikelihood + "Dark"; });
 
 			var dateText = dateRectangleGroup.selectAll("text")
-							.data(data.jsonData)
-							.enter()
-							.append("text");
+				.data(data.jsonData)
+				.enter()
+				.append("text");
 
 			var dateTextAttributes = dateText
-								.attr("x", function(d, i){ return i*85+15; })
-								.attr("y", 20)
-								.text(function(d){ return formatDate(d); })
-     							.attr("class", "dateText");
+				.attr("x", function(d, i){ return i*85+15; })
+				.attr("y", 20)
+				.text(function(d){ return formatDate(d); })
+				.attr("class", "dateText");
+
+     		var temperatureGraphGroup = svgContainer.append("g")
+     			.attr("transform", "translate(0,95)");
+
+     		var temperaturePointBox = temperatureGraphGroup.append("rect")
+     			.attr("x",0)
+     			.attr("y",0)
+     			.attr("height", 150)
+     			.attr("width", 80)
+     			.attr("class","nonArea");
+
+
+            var temperatureGraphXscale = d3.scale.linear()
+	            .domain([0,23])
+	             .range([0,80]);
+
+	        var temperatureGraphYscale = d3.scale.linear()
+	        	.domain([0,120])
+	        	.range([0,120]);
+
+	       var area = d3.svg.area()
+			    .x(function(d) { return temperatureGraphXscale(formatHour(d)); })
+			    .y0(150)
+			    .y1(function(d) { return temperatureGraphYscale(d.temperature); });
+
+     		var temperatureAreaGraph = temperatureGraphGroup.append("path")
+     				.attr("d", area(data.jsonData[0].temperatures))
+     				.attr("class","area")
+     				.attr("stroke", "white")
+                    .attr("stroke-width", 7);
 
 
 		</script>
